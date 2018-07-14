@@ -84,7 +84,6 @@ from keras.layers.pooling import MaxPooling2D
 # from keras.layers import Cropping2D             # Keras v2
 from keras.layers.convolutional import Cropping2D # Keras v1.2.1
 
-# construct a regression network
 model = Sequential()
 
 ## NVIDIA Net: input 160x320x3 -> 160x320x3
@@ -94,27 +93,27 @@ model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
 # 160x320x3 -> 65x320x3
 model.add(Cropping2D(cropping=((70,25),(0,0))))
 
-# channels(filters):24, kernel: 5x5
-# 65x320x3 -> x24
+# channels(filters):24, kernel: 5x5, stride: (2,2), padding(default): valid
+# 65x320x3 -> 31x158x24
 model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))
 
-# channels:36, kernel: 5x5
-#          -> x36
+# channels:36, kernel: 5x5, stride: (2,2), padding(default): valid
+# 31x158x24 -> 14x77x36
 model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
 
-# channels:48, kernel: 5x5
-#          -> x48
+# channels:48, kernel: 5x5, stride: (2,2), padding(default): valid
+# 14x77x36  -> 5x37x48
 model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
 
-# channels:64, kernel: 3x3
-#          -> x64
+# channels:64, kernel: 3x3, stride: (2,2), padding(default): valid
+# 5x37x48 -> 3x35x64
 model.add(Convolution2D(64,3,3, activation="relu"))
 
-# channels:64, kernel: 3x3
-# 
+# channels:64, kernel: 3x3, stride: (2,2), padding(default): valid
+# 3x35x64 -> 1x33x64
 model.add(Convolution2D(64,3,3, activation="relu"))
 
-model.add(Flatten())  # flatten to 
+model.add(Flatten())
 model.add(Dense(100, activation="relu")) # fully-connected layer: 100 neurons
 model.add(Dropout(0.5))
 model.add(Dense(50, activation="relu"))  # fully-connected layer: 50 neurons
